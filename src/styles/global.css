@@ -2,8 +2,8 @@
 
 @theme {
 
---font-Bricolage: "Bricolage Grotesque Variable", sans-serif;
---font-DMSans: "DM Sans Variable", sans-serif;
+--font-Bricolage: 'Bricolage Grotesque Variable', sans-serif;
+--font-DMSans: 'DM Sans Variable', sans-serif;
 /* Colores  */
 --color-neutral-900: #03012D;
 --color-neutral-800: #272541;
@@ -17,8 +17,4 @@
 
 --color-blue-500: #4455DA;
 --color-blue-700: #2D1C9C;
-}
-
-body {
-  font-family: 'DM Sans Variable', sans-serif;
 }

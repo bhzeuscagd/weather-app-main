@@ -1,0 +1,48 @@
+---
+// src/components/weather/UnitSelector.astro
+import Icon from "../ui/Icon.astro";
+
+// Recibimos la unidad actual para saber cuál marcar con el "check"
+interface Props {
+    currentUnit: "metric" | "imperial";
+}
+
+const { currentUnit } = Astro.props;
+const isMetric = currentUnit === "metric";
+---
+
+<div class="relative group z-50">
+    <button
+        class="bg-neutral-800 hover:bg-neutral-700 text-white size-10 md:w-auto md:px-4 md:h-10 rounded-full shadow-lg transition flex items-center justify-center gap-2 cursor-pointer"
+    >
+        <Icon name="units" class="size-6 text-white" />
+        <span class="font-bold hidden md:block">Units</span>
+        <Icon name="dropdown" class="size-3 hidden md:block" />
+    </button>
+
+    <div
+        class="absolute right-0 top-full mt-2 w-40 bg-neutral-800 rounded-xl shadow-2xl border border-neutral-700 overflow-hidden hidden group-focus-within:block group-hover:block"
+    >
+        <a
+            href="?units=metric"
+            class:list={[
+                "block px-4 py-3 text-sm hover:bg-neutral-700 transition flex items-center justify-between",
+                isMetric ? "text-white font-bold" : "text-neutral-300",
+            ]}
+        >
+            <span>Metric (°C)</span>
+            {isMetric && <Icon name="check" class="size-3 text-blue-500" />}
+        </a>
+
+        <a
+            href="?units=imperial"
+            class:list={[
+                "block px-4 py-3 text-sm hover:bg-neutral-700 transition flex items-center justify-between",
+                !isMetric ? "text-white font-bold" : "text-neutral-300",
+            ]}
+        >
+            <span>Imperial (°F)</span>
+            {!isMetric && <Icon name="check" class="size-3 text-blue-500" />}
+        </a>
+    </div>
+</div>
