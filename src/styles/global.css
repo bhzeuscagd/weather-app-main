@@ -18,3 +18,7 @@
 --color-blue-500: #4455DA;
 --color-blue-700: #2D1C9C;
 }
+
+.border-hover{
+    @apply hover:bg-white/20 hover:border-black hover:border-solid hover:border-2 hover:ring-2 hover:ring-white
+}
