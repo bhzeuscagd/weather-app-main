@@ -1,0 +1,53 @@
+---
+// src/components/WeatherIcon.astro
+
+interface Props {
+    code: number;
+    class?: string;
+    alt?: string;
+}
+
+const { code, class: className, alt = "Icono del clima" } = Astro.props;
+
+// Función para mapear el código numérico al nombre EXACTO de los archivos .webp
+const getWeatherImage = (c: number) => {
+    // Código 0: Despejado
+    if (c === 0) return "icon-sunny.webp";
+
+    // Códigos 1-2: Parcialmente nublado
+    if (c === 1 || c === 2) return "icon-partly-cloudy.webp";
+
+    // Código 3: Nublado
+    if (c === 3) return "icon-overcast.webp";
+
+    // Códigos 45, 48: Niebla
+    if (c === 45 || c === 48) return "icon-fog.webp";
+
+    // Códigos 51, 53, 55: Llovizna
+    if (c >= 51 && c <= 57) return "icon-drizzle.webp";
+
+    // Códigos 61-67, 80-82: Lluvia
+    if ((c >= 61 && c <= 67) || (c >= 80 && c <= 82)) return "icon-rain.webp";
+
+    // Códigos 71-77, 85-86: Nieve
+    if ((c >= 71 && c <= 77) || (c >= 85 && c <= 86)) return "icon-snow.webp";
+
+    // Códigos 95-99: Tormenta
+    if (c >= 95) return "icon-storm.webp";
+
+    // Por defecto (fallback)
+    return "icon-sunny.webp";
+};
+
+const imageName = getWeatherImage(code);
+const imagePath = `/images/${imageName}`;
+---
+
+<img
+    src={imagePath}
+    alt={alt}
+    class={`object-contain ${className}`}
+    loading="lazy"
+    width="64"
+    height="64"
+/>

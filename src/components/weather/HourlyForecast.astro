@@ -1,0 +1,27 @@
+---
+import Hours from "./ui_HourlyForestcast/Hours.astro";
+import { getCoordinates, getWeather } from "../../services/weather.ts";
+
+// ... (Aquí va tu lógica de búsqueda y API que ya tenías) ...
+const cityParam = Astro.url.searchParams.get("city") || "Bogota";
+const cityInfo = await getCoordinates(cityParam);
+const weatherData = cityInfo
+    ? await getWeather(cityInfo.latitude, cityInfo.longitude)
+    : null;
+---
+
+<section class="theme-card flex flex-col gap-2 max-w-[340px] m-2 p-2">
+    <header>
+        <h2>Hourly Forecast</h2>
+        <button> Tuesday </button>
+    </header>
+    <div>
+        {
+            weatherData && (
+                <div class="mt-8">
+                    <Hours hourly={weatherData.hourly} />
+                </div>
+            )
+        }
+    </div>
+</section>

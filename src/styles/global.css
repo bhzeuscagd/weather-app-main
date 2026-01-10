@@ -22,3 +22,7 @@
 .border-hover{
     @apply hover:bg-white/20 hover:border-black hover:border-solid hover:border-2 hover:ring-2 hover:ring-white
 }
+
+.theme-card{
+    @apply w-full bg-white/10 rounded-xl border border-white/20
+}
