@@ -1,0 +1,112 @@
+---
+// Imports
+import WeatherIcon from "../weather/ui_HourlyForestcast/WeatherIcon.astro"; // Ajusta ruta
+import { loadWeatherFromUrl } from "../../services/weather.ts";
+import { getStackCardData } from "../../services/weatherUtils.ts";
+
+// 1. Carga Autónoma
+const dataResponse = await loadWeatherFromUrl(Astro.url.searchParams);
+let info = null;
+
+if (dataResponse) {
+    // Usamos la nueva utilidad para formatear todo bonito
+    info = getStackCardData(dataResponse.weather, dataResponse.geo);
+}
+---
+
+<section class="max-w-[350px] p-2 flex justify-center items-center">
+    {
+        info ? (
+            <div class="grid grid-cols-2 grid-rows-8 h-[500px] gap-4">
+                {/* 1. MAIN CARD (Ciudad, Fecha, Icono, Max Temp) */}
+                <div class="col-span-2 row-span-4 theme-card bg-[url('/images/bg-today-small.svg')] bg-cover bg-center bg-no-repeat p-5 flex flex-col justify-between relative overflow-hidde">
+                    {/* Cabecera */}
+                    <div class="z-10">
+                        <h2 class="text-2xl font-bold text-white font-DMSans">
+                            {info.city},{" "}
+                            <span class="text-white/60 text-lg">
+                                {info.country}
+                            </span>
+                        </h2>
+                        <p class="text-white/50 text-sm font-light mt-1 capitalize">
+                            {info.date}
+                        </p>
+                    </div>
+
+                    {/* Contenido Central */}
+                    <div class="flex items-center justify-between z-10 mt-2">
+                        <div class="flex flex-col">
+                            <span class="text-6xl font-bold text-white tracking-tighter">
+                                {info.temp}°
+                            </span>
+                            <span class="text-white/40 text-sm font-bold uppercase tracking-widest mt-1">
+                                Max Temp
+                            </span>
+                        </div>
+
+                        <div class="w-28 h-28">
+                            <WeatherIcon
+                                code={info.code}
+                                class="w-full h-full drop-shadow-2xl"
+                            />
+                        </div>
+                    </div>
+                </div>
+
+                {/* 2. FEELS LIKE */}
+                <div class="row-span-2 row-start-5 theme-card p-4 flex flex-col justify-center gap-1">
+                    <span class="text-white/50 text-xs uppercase font-bold tracking-wider">
+                        Feels like
+                    </span>
+                    <span class="text-2xl font-semibold text-white">
+                        {info.feelsLike}°
+                    </span>
+                </div>
+
+                {/* 3. HUMIDITY */}
+                <div class="row-span-2 row-start-5 theme-card p-4 flex flex-col justify-center gap-1">
+                    <span class="text-white/50 text-xs uppercase font-bold tracking-wider">
+                        Humidity
+                    </span>
+                    <span class="text-2xl font-semibold text-white">
+                        {info.humidity}%
+                    </span>
+                </div>
+
+                {/* 4. WIND */}
+                <div class="row-span-2 row-start-7 theme-card p-4 flex flex-col justify-center gap-1">
+                    <span class="text-white/50 text-xs uppercase font-bold tracking-wider">
+                        Wind
+                    </span>
+                    <div class="flex items-baseline gap-1">
+                        <span class="text-2xl font-semibold text-white">
+                            {info.wind}
+                        </span>
+                        <span class="text-xs text-white/60">km/h</span>
+                    </div>
+                </div>
+
+                {/* 5. PRECIPITATION */}
+                <div class="row-span-2 row-start-7 theme-card p-4 flex flex-col justify-center gap-1">
+                    <span class="text-white/50 text-xs uppercase font-bold tracking-wider">
+                        Precipitation
+                    </span>
+                    <div class="flex items-baseline gap-1">
+                        <span class="text-2xl font-semibold text-white">
+                            {info.precip}
+                        </span>
+                        <span class="text-xs text-white/60">mm</span>
+                    </div>
+                </div>
+            </div>
+        ) : (
+            // Estado de carga o error
+            <div class="grid grid-cols-2 grid-rows-8 h-[500px] gap-4">
+                <div class="col-span-2 row-span-4 theme-card flex items-center justify-center text-white/50">
+                    Cargando...
+                </div>
+                {/* ... esqueletos opcionales ... */}
+            </div>
+        )
+    }
+</section>

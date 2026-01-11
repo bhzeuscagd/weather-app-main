@@ -2,8 +2,13 @@
 import Layout from "../layouts/Layout.astro";
 import Header from "../layouts/Header.astro";
 import HourlyForecast from "../components/weather/HourlyForecast.astro";
+import DailyForecast from "../components/weather/DailyForecast.astro";
+import StatCard from "../components/weather/StatCard.astro";
 ---
 
 <Layout>
+    <Header />
+    <StatCard />
+    <DailyForecast />
     <HourlyForecast />
 </Layout>

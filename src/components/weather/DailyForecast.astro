@@ -1,0 +1,32 @@
+---
+import WeatherDataDaily from "./ui_DailyForecast/weatherDataDaily.astro";
+import { loadWeatherFromUrl } from "../../services/weather.ts";
+
+// 1. CARGAMOS LA DATA (Ahora trae { weather, geo })
+const response = await loadWeatherFromUrl(Astro.url.searchParams);
+
+// 2. DESEMPAQUETAMOS
+// Si hubo respuesta, sacamos la parte '.weather'. Si no, es null.
+const weatherData = response ? response.weather : null;
+---
+
+<section class="flex flex-col gap-4 p-2">
+    <header class="font-DMSans font-semibold text-white">
+        <h2>Daily Forecast</h2>
+    </header>
+
+    <div>
+        <div class="grid grid-cols-3 grid-rows-6 gap-3 h-[500px]">
+            {/* Ahora weatherData ya es el objeto de clima correcto */}
+            {
+                weatherData ? (
+                    <WeatherDataDaily daily={weatherData.daily} />
+                ) : (
+                    <div class="col-span-3 text-white/50 text-center flex items-center justify-center">
+                        Cargando...
+                    </div>
+                )
+            }
+        </div>
+    </div>
+</section>

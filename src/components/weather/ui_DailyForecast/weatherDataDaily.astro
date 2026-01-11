@@ -1,0 +1,42 @@
+---
+import WeatherIcon from "../ui_HourlyForestcast/WeatherIcon.astro";
+// Reutilizamos la misma interfaz
+import type { DailyData } from "../../../services/weather.ts";
+
+import { getFormattedDaily } from "../../../services/weatherUtils.ts";
+
+interface Props {
+    daily: DailyData;
+}
+
+const { daily } = Astro.props;
+
+const forecastData = getFormattedDaily(daily);
+---
+
+{
+    forecastData.map((day) => (
+        <div class="theme-card row-span-2 flex flex-col items-center justify-between py-3">
+            {/* 1. Día */}
+            <span class="text-gray-300 text-sm font-medium uppercase tracking-wide">
+                {day.dayName}
+            </span>
+
+            {/* 2. Icono */}
+            <div class="w-12 h-12">
+                <WeatherIcon
+                    code={day.code}
+                    class="w-full h-full drop-shadow-md"
+                />
+            </div>
+
+            {/* 3. Temperaturas */}
+            <div class="flex flex-row justify-between leading-none w-full px-2">
+                <span class="text-white font-bold text-lg">{day.maxTemp}°</span>
+                <span class="text-white/60 font-semibold text-lg">
+                    {day.minTemp}°
+                </span>
+            </div>
+        </div>
+    ))
+}

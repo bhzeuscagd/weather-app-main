@@ -1,5 +1,21 @@
 // --- 1. INTERFACES ---
 
+
+// A. CREA ESTA NUEVA INTERFAZ (Define cómo es UNA ciudad)
+export interface CityInfo {
+    id: number;
+    name: string;
+    latitude: number;
+    longitude: number;
+    country: string;
+    admin1?: string; 
+}
+
+export interface GeoResult {
+  // B. USA LA NUEVA INTERFAZ AQUÍ
+  results?: CityInfo[]; 
+}
+
 export interface GeoResult {
   results?: {
     id: number;
@@ -11,6 +27,20 @@ export interface GeoResult {
   }[];
 }
 
+export interface DailyData {
+    time: string[];
+    temperature_2m_max: number[];
+    temperature_2m_min: number[];
+    weather_code: number[];
+    precipitation_sum: number[];
+}
+
+export interface HourlyData {
+    time: string[];
+    temperature_2m: number[];
+    weather_code: number[];
+}
+
 export interface WeatherData {
   current: {
     temperature_2m: number;
@@ -19,18 +49,8 @@ export interface WeatherData {
     weather_code: number;
     wind_speed_10m: number;
   };
-  daily: {
-    time: string[];
-    temperature_2m_max: number[];
-    temperature_2m_min: number[];
-    weather_code: number[];
-  };
-  // Agregado para soportar tu petición de horas
-  hourly: {
-    time: string[];
-    temperature_2m: number[];
-    weather_code: number[];
-  };
+  daily: DailyData;
+  hourly: HourlyData;
 }
 
 // --- 2. FUNCIONES DE SERVICIO ---
@@ -66,7 +86,7 @@ export const getWeather = async (lat: number, lon: number) => {
     latitude: lat.toString(),
     longitude: lon.toString(),
     current: "temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m",
-    daily: "weather_code,temperature_2m_max,temperature_2m_min",
+    daily: "weather_code,temperature_2m_max,temperature_2m_min,precipitation_sum",
     hourly: "temperature_2m,weather_code", // <--- IMPORTANTE: Esto trae las horas
     timezone: "auto",
   });
@@ -110,4 +130,21 @@ export const formatHourlyData = (hourlyData: WeatherData['hourly'], limit = 24) 
     temperature: Math.round(tempSlice[index]), // Redondeamos para que se vea mejor
     weatherCode: codeSlice[index]
   }));
+};
+
+/**
+ * FUNCIÓN MAESTRA:
+ * Se encarga de leer la URL, buscar la ciudad y devolver el clima listo.
+ * Si falla, devuelve null.
+ */
+export const loadWeatherFromUrl = async (searchParams: URLSearchParams) => {
+  const city = searchParams.get("city") || "Bogota";
+  const coords = await getCoordinates(city); // Esto devuelve CityInfo o undefined
+  
+  if (!coords) return null;
+
+  const weather = await getWeather(coords.latitude, coords.longitude);
+  
+  // TypeScript ahora sabe que 'coords' es de tipo CityInfo
+  return weather ? { weather, geo: coords } : null;
 };
