@@ -2,7 +2,6 @@
 // 1. Importamos el componente que decide qué imagen mostrar
 import WeatherIcon from "./WeatherIcon.astro";
 
-// 1. Definimos la estructura de los datos que vienen de la API
 interface Props {
     hourly: {
         time: string[];
@@ -11,42 +10,35 @@ interface Props {
     };
 }
 
-// 2. Extraemos las variables de los "props"
 const { hourly } = Astro.props;
 
-//logica y extraccion
-// Buscamos la hora actual para no mostrar el pasado
-const now = new Date();
-const currentIndex = hourly.time.findIndex((t) => new Date(t) >= now);
-const startIndex = currentIndex !== -1 ? currentIndex : 0;
-
-// Cortamos y moldeamos los datos (Próximas 8 horas)
-const horasParaMostrar = hourly.time
-    .slice(startIndex, startIndex + 8)
-    .map((time, i) => {
-        const realIndex = startIndex + i;
-        return {
-            horaLegible: new Date(time).toLocaleTimeString("es-ES", {
-                hour: "2-digit",
-                minute: "2-digit",
-            }),
-            temperatura: Math.round(hourly.temperature_2m[realIndex]),
-            codigoClima: hourly.weather_code[realIndex],
-        };
-    });
+// LOGICA SIMPLE:
+// Como el padre ya filtró el día correcto, hourly.time[0] es la primera hora de ese día.
+// Solo cortamos (.slice) las primeras 8 para que no se haga una lista infinita.
+const horasParaMostrar = hourly.time.slice(0, 8).map((time, i) => {
+    return {
+        // Formateamos la hora
+        horaLegible: new Date(time).toLocaleTimeString("es-ES", {
+            hour: "2-digit",
+            minute: "2-digit",
+        }),
+        // Usamos el índice 'i' directo porque los arrays están sincronizados
+        temperatura: Math.round(hourly.temperature_2m[i]),
+        codigoClima: hourly.weather_code[i],
+    };
+});
 ---
 
 <div class="flex flex-col gap-3 p-2">
     {
         horasParaMostrar.map((item) => (
-            // Aquí está la "tarjeta" directamente, sin crear otro componente
             <div class="flex flex-row items-center justify-between p-1 theme-card">
                 <div class="flex flex-row items-center gap-2 text-white">
                     <WeatherIcon
                         code={item.codigoClima}
                         class="w-10 h-10 mb-2"
                     />
-                    {item.horaLegible}
+                    <span class="text-sm font-light">{item.horaLegible}</span>
                 </div>
                 <span class="text-xl font-semibold text-white">
                     {item.temperatura}°

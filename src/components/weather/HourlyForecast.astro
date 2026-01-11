@@ -1,26 +1,57 @@
 ---
 import Hours from "./ui_HourlyForestcast/Hours.astro";
+import OptionDays from "./ui_HourlyForestcast/OptionDays.astro";
 import { getCoordinates, getWeather } from "../../services/weather.ts";
+import { getFilteredHours } from "../../services/weatherUtils.ts"; // <--- IMPORTAMOS LA UTILIDAD
 
-// ... (Aquí va tu lógica de búsqueda y API que ya tenías) ...
+// 1. Obtener parámetros
+const dateParam =
+    Astro.url.searchParams.get("date") ||
+    new Date().toISOString().split("T")[0];
 const cityParam = Astro.url.searchParams.get("city") || "Bogota";
+
+// 2. Llamadas a la API
 const cityInfo = await getCoordinates(cityParam);
 const weatherData = cityInfo
     ? await getWeather(cityInfo.latitude, cityInfo.longitude)
     : null;
+
+// 3. LOGICA CENTRALIZADA
+// Usamos la función externa para obtener SOLO las horas del día seleccionado
+const filteredHours = weatherData
+    ? getFilteredHours(weatherData.hourly, dateParam)
+    : null;
 ---
 
 <section class="theme-card flex flex-col gap-2 max-w-[340px] m-2 p-2">
-    <header>
-        <h2>Hourly Forecast</h2>
-        <button> Tuesday </button>
-    </header>
-    <div>
+    <header class="flex flex-row justify-between px-2 items-center">
+        <h2 class="font-DMSans text-xl font-semibold text-white">
+            Hourly Forecast
+        </h2>
+
+        {/* Renderizamos el Dropdown si hay datos */}
         {
             weatherData && (
-                <div class="mt-8">
-                    <Hours hourly={weatherData.hourly} />
+                <OptionDays
+                    days={weatherData.daily.time}
+                    selectedDay={dateParam}
+                />
+            )
+        }
+    </header>
+
+    <div>
+        {/* Renderizamos las Horas SOLO si el filtrado funcionó */}
+        {
+            filteredHours ? (
+                <div>
+                    {/* LE PASAMOS filteredHours, NO weatherData.hourly */}
+                    <Hours hourly={filteredHours} />
                 </div>
+            ) : (
+                <p class="text-white/50 text-sm p-2">
+                    No hay datos para esta fecha.
+                </p>
             )
         }
     </div>
