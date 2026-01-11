@@ -3,51 +3,53 @@ import Icon from "../../ui/Icon.astro";
 
 interface Props {
     days: string[];
-    selectedDay: string;
+    selectedDay: string; // Recibimos "hoy" para marcarlo inicial
 }
 
 const { days, selectedDay } = Astro.props;
 
 const formatDate = (dateStr: string) => {
+    // Truco para evitar problemas de zona horaria al formatear solo el nombre
     const date = new Date(dateStr + "T00:00:00");
     return date.toLocaleDateString("es-ES", { weekday: "long" });
 };
 
-const selectedLabel = formatDate(selectedDay);
+const initialLabel = formatDate(selectedDay);
 ---
 
 <div class="relative inline-block text-left z-50 group">
     <button
-        class="font-DMSans inline-flex w-full justify-center items-center gap-2 rounded-md bg-white/10 px-2 py-1 text-sm text-white inset-ring-1 inset-ring-white/5 hover:bg-white/20 hover:border-black hover:border-solid hover:border-2 hover:ring-2 hover:ring-white capitalize"
+        id="dropdown-trigger"
+        class="font-DMSans inline-flex w-full justify-center items-center gap-2 rounded-md bg-white/20 px-2 py-1 text-sm text-white inset-ring-1 inset-ring-white/5 hover:bg-white/20 hover:border-black hover:border-solid hover:border-2 hover:ring-2 hover:ring-white capitalize"
     >
-        <span>{selectedLabel}</span>
+        <span id="current-label">{initialLabel}</span>
         <Icon name="dropdown" class="w-2.5 h-5 text-white" />
     </button>
 
     <menu
-        class="absolute right-0 top-full mt-2 group-hover:block hidden group-focus-within:block w-48 origin-top-right divide-y divide-white/10 rounded-md bg-[#13131A] outline-1 border border-white/30 transition transition-discrete backdrop-blur-md shadow-sm shadow-white/20"
+        class="absolute right-0 top-full mt-2 group-hover:block hidden group-focus-within:block w-48 origin-top-right divide-y rounded-md bg-gray-900/10 outline-1 border border-white/30 transition transition-discrete shadow-sm shadow-white/20"
     >
-        <div class="p-1 flex flex-col gap-1">
+        <div class="p-1 flex flex-col gap-1 bg-gray-700">
             {
                 days.map((day) => {
                     const label = formatDate(day);
-                    const isActive = day === selectedDay;
+                    // Ya no necesitamos isActive de servidor, lo manejaremos con JS
+                    const isToday = day === selectedDay;
 
                     return (
                         <button
                             class:list={[
-                                "text-left px-3 py-2 text-sm rounded-md capitalize w-full transition-colors flex justify-between items-center",
-                                isActive
+                                "day-option text-left px-3 py-2 text-sm rounded-md capitalize w-full transition-colors flex justify-between items-center",
+                                isToday
                                     ? "bg-white/20 text-white font-bold"
-                                    : "text-gray-300 hover:bg-white/10 hover:text-white",
+                                    : "text-gray-300 hover:bg-white/20 hover:text-white",
                             ]}
                             data-date={day}
-                            onclick="updateDate(this)"
+                            data-label={label}
                         >
                             {label}
-                            {isActive && (
-                                <Icon name="check" class="w-3 h-3 text-white" />
-                            )}
+                            {/* El check se maneja con JS ahora */}
+                            <span class="check-icon hidden text-white">✓</span>
                         </button>
                     );
                 })
@@ -57,10 +59,46 @@ const selectedLabel = formatDate(selectedDay);
 </div>
 
 <script is:inline>
-    function updateDate(button) {
-        const newDate = button.getAttribute("data-date");
-        const url = new URL(window.location.href);
-        url.searchParams.set("date", newDate);
-        window.location.href = url.toString();
-    }
+    // Seleccionamos todos los botones de opción
+    const buttons = document.querySelectorAll(".day-option");
+    const labelSpan = document.getElementById("current-label");
+
+    buttons.forEach((btn) => {
+        btn.addEventListener("click", (e) => {
+            // 1. Obtener la fecha seleccionada
+            // Usamos currentTarget para asegurar que tomamos el botón, no el span interno
+            const targetBtn = e.currentTarget;
+            const date = targetBtn.getAttribute("data-date");
+            const label = targetBtn.getAttribute("data-label");
+
+            // 2. Actualizar el texto del botón principal
+            if (labelSpan) labelSpan.textContent = label;
+
+            // 3. LOGICA VISUAL DEL MENU (Checks y estilos)
+            // Quitamos estilo activo a todos
+            buttons.forEach((b) => {
+                b.classList.remove("bg-white/20", "text-white", "font-bold");
+                b.classList.add("text-gray-300");
+                const check = b.querySelector(".check-icon");
+                if (check) check.classList.add("hidden");
+            });
+            // Ponemos estilo al seleccionado
+            targetBtn.classList.remove("text-gray-300");
+            targetBtn.classList.add("bg-white/20", "text-white", "font-bold");
+            const activeCheck = targetBtn.querySelector(".check-icon");
+            if (activeCheck) activeCheck.classList.remove("hidden");
+
+            // 4. MOSTRAR LA LISTA DE HORAS CORRECTA
+            // Ocultamos todas las listas
+            document.querySelectorAll(".hourly-list").forEach((list) => {
+                list.classList.add("hidden");
+            });
+
+            // Mostramos la que tiene el ID correspondiente
+            const listToShow = document.getElementById(`hours-${date}`);
+            if (listToShow) {
+                listToShow.classList.remove("hidden");
+            }
+        });
+    });
 </script>

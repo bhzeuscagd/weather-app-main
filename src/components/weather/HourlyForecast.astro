@@ -2,25 +2,30 @@
 import Hours from "./ui_HourlyForestcast/Hours.astro";
 import OptionDays from "./ui_HourlyForestcast/OptionDays.astro";
 import { getCoordinates, getWeather } from "../../services/weather.ts";
-import { getFilteredHours } from "../../services/weatherUtils.ts"; // <--- IMPORTAMOS LA UTILIDAD
+import { getFilteredHours } from "../../services/weatherUtils.ts"; // Asegúrate que esta ruta esté bien
 
-// 1. Obtener parámetros
-const dateParam =
-    Astro.url.searchParams.get("date") ||
-    new Date().toISOString().split("T")[0];
+// 1. FECHA LOCAL (Para marcar "hoy" correctamente)
+// Usamos 'sv-SE' porque devuelve formato ISO (YYYY-MM-DD) y respeta tu zona horaria local
+const now = new Date();
+const localDate = now.toLocaleDateString("sv-SE");
+
 const cityParam = Astro.url.searchParams.get("city") || "Bogota";
-
-// 2. Llamadas a la API
 const cityInfo = await getCoordinates(cityParam);
 const weatherData = cityInfo
     ? await getWeather(cityInfo.latitude, cityInfo.longitude)
     : null;
 
-// 3. LOGICA CENTRALIZADA
-// Usamos la función externa para obtener SOLO las horas del día seleccionado
-const filteredHours = weatherData
-    ? getFilteredHours(weatherData.hourly, dateParam)
-    : null;
+// 2. ARREGLO DEL ERROR: Inicialización directa
+// Si hay weatherData, mapeamos los días. Si no, devolvemos array vacío.
+const allDaysData = weatherData
+    ? weatherData.daily.time.map((day) => {
+          return {
+              date: day,
+              // Llamamos a tu utilidad para obtener las horas de ESE día específico
+              hours: getFilteredHours(weatherData.hourly, day),
+          };
+      })
+    : [];
 ---
 
 <section class="theme-card flex flex-col gap-2 max-w-[340px] m-2 p-2">
@@ -29,29 +34,36 @@ const filteredHours = weatherData
             Hourly Forecast
         </h2>
 
-        {/* Renderizamos el Dropdown si hay datos */}
         {
             weatherData && (
                 <OptionDays
                     days={weatherData.daily.time}
-                    selectedDay={dateParam}
+                    selectedDay={localDate}
                 />
             )
         }
     </header>
 
-    <div>
-        {/* Renderizamos las Horas SOLO si el filtrado funcionó */}
+    <div id="hours-container">
+        {/* Renderizamos las 7 listas de la semana */}
         {
-            filteredHours ? (
-                <div>
-                    {/* LE PASAMOS filteredHours, NO weatherData.hourly */}
-                    <Hours hourly={filteredHours} />
-                </div>
-            ) : (
-                <p class="text-white/50 text-sm p-2">
-                    No hay datos para esta fecha.
-                </p>
+            allDaysData.map((dayData) =>
+                // Solo renderizamos si 'dayData.hours' no es null
+                dayData.hours ? (
+                    <div
+                        id={`hours-${dayData.date}`}
+                        class={`hourly-list ${dayData.date === localDate ? "" : "hidden"}`}
+                    >
+                        <Hours hourly={dayData.hours} />
+                    </div>
+                ) : null,
+            )
+        }
+
+        {/* Mensaje de carga o error si no hay datos */}
+        {
+            allDaysData.length === 0 && (
+                <p class="text-white/50 text-sm p-2">Cargando datos...</p>
             )
         }
     </div>

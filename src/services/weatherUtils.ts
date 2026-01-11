@@ -5,33 +5,28 @@ interface HourlyData {
 }
 
 export const getFilteredHours = (hourly: HourlyData, selectedDate: string) => {
-    // 1. Buscamos el rango de índices para el día seleccionado (00:00 a 23:00)
-    const indices = hourly.time
-        .map((t, i) => (t.startsWith(selectedDate) ? i : -1))
-        .filter((i) => i !== -1);
+    // 1. Encontrar inicio (00:00 o Hora Actual si es hoy)
+    let startIndex = hourly.time.findIndex((t) => t.startsWith(selectedDate));
+    if (startIndex === -1) return null;
 
-    // Si no hay datos para ese día, retornamos null
-    if (indices.length === 0) return null;
-
-    let start = indices[0]; // Por defecto: 00:00
-    const end = indices[indices.length - 1] + 1; // El final del día
-
-    // 2. CORRECCIÓN: Ajuste para el día actual ("Hoy")
     const now = new Date();
-    
-    // Buscamos cuál es el índice que corresponde a "ahora mismo" en toda la lista
-    const currentHourIndex = hourly.time.findIndex(t => new Date(t) >= now);
+    // Nota: Usamos 'sv-SE' para obtener YYYY-MM-DD local
+    const localDate = now.toLocaleDateString('sv-SE'); 
 
-    // Si encontramos la hora actual Y esa hora está dentro del día que estamos viendo...
-    // (Ej: Si seleccionaste "Hoy", currentHourIndex estará entre start y end)
-    if (currentHourIndex !== -1 && currentHourIndex >= start && currentHourIndex < end) {
-        start = currentHourIndex; // Movemos el inicio a la hora actual
+    if (selectedDate === localDate) {
+        const currentHourIndex = hourly.time.findIndex(t => new Date(t) >= now);
+        if (currentHourIndex !== -1 && currentHourIndex > startIndex) {
+            startIndex = currentHourIndex;
+        }
     }
 
-    // 3. Devolvemos el array cortado desde el nuevo 'start'
+    // 2. Traemos 24 HORAS para llenar el scroll
+    const HOURS_TO_SHOW = 24; 
+    const endIndex = startIndex + HOURS_TO_SHOW;
+
     return {
-        time: hourly.time.slice(start, end),
-        temperature_2m: hourly.temperature_2m.slice(start, end),
-        weather_code: hourly.weather_code.slice(start, end),
+        time: hourly.time.slice(startIndex, endIndex),
+        temperature_2m: hourly.temperature_2m.slice(startIndex, endIndex),
+        weather_code: hourly.weather_code.slice(startIndex, endIndex),
     };
 };
