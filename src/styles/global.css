@@ -29,3 +29,12 @@
     @apply w-full bg-white/10 rounded-xl border border-white/20
 }
 
+.theme-card-info-main{
+    @apply p-4 flex flex-col gap-4 justify-between
+}
+
+.theme-card-info-sub{
+    @apply text-white/50 text-xs uppercase font-bold font-DMSans tracking-wider
+}
+
+
