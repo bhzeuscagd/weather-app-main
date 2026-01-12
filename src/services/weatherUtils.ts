@@ -1,6 +1,7 @@
 import type { DailyData, HourlyData } from "./weather";
 import type { WeatherData, CityInfo } from "./weather";
 
+
 export const getFilteredHours = (hourly: HourlyData, selectedDate: string) => {
     // 1. Encontrar inicio (00:00 o Hora Actual si es hoy)
     let startIndex = hourly.time.findIndex((t) => t.startsWith(selectedDate));
@@ -70,3 +71,5 @@ export const getStackCardData = (weather: WeatherData, geo: CityInfo) => {
         precip: weather.daily.precipitation_sum[0]
     };
 };
+
+

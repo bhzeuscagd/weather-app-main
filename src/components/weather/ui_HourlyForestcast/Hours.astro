@@ -14,7 +14,7 @@ const { hourly } = Astro.props;
 // YA NO CORTAMOS AQUÍ. Mapeamos todo lo que nos mande la utilidad (24 horas).
 const horasParaMostrar = hourly.time.map((time, i) => {
     return {
-        horaLegible: new Date(time).toLocaleTimeString("es-ES", {
+        horaLegible: new Date(time).toLocaleTimeString("en-US", {
             hour: "2-digit",
             minute: "2-digit",
         }),

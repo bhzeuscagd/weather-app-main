@@ -59,7 +59,7 @@ export interface WeatherData {
  * Busca las coordenadas de una ciudad por nombre.
  */
 export const getCoordinates = async (city: string) => {
-  const url = `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(city)}&count=1&language=es&format=json`;
+  const url = `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(city)}&count=1&language=en&format=json`;
   
   try {
     const response = await fetch(url);
@@ -126,7 +126,7 @@ export const formatHourlyData = (hourlyData: WeatherData['hourly'], limit = 24) 
   const codeSlice = hourlyData.weather_code.slice(startIndex, endIndex);
 
   return timeSlice.map((time, index) => ({
-    time: new Date(time).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' }),
+    time: new Date(time).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
     temperature: Math.round(tempSlice[index]), // Redondeamos para que se vea mejor
     weatherCode: codeSlice[index]
   }));
@@ -147,4 +147,26 @@ export const loadWeatherFromUrl = async (searchParams: URLSearchParams) => {
   
   // TypeScript ahora sabe que 'coords' es de tipo CityInfo
   return weather ? { weather, geo: coords } : null;
+};
+
+/**
+ * Busca sugerencias de ciudades para el autocompletado.
+ * Devuelve un array vacío si hay error o no hay resultados.
+ */
+export const searchCitySuggestions = async (query: string) => {
+  // Evitamos llamadas innecesarias si el texto es muy corto
+  if (!query || query.length < 2) return [];
+
+  const url = `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(query)}&count=5&language=en&format=json`;
+
+  try {
+    const response = await fetch(url);
+    if (!response.ok) return [];
+    
+    const data = (await response.json()) as GeoResult;
+    return data.results || [];
+  } catch (error) {
+    console.error("Error buscando sugerencias:", error);
+    return [];
+  }
 };

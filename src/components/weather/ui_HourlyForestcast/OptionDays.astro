@@ -11,7 +11,7 @@ const { days, selectedDay } = Astro.props;
 const formatDate = (dateStr: string) => {
     // Truco para evitar problemas de zona horaria al formatear solo el nombre
     const date = new Date(dateStr + "T00:00:00");
-    return date.toLocaleDateString("es-ES", { weekday: "long" });
+    return date.toLocaleDateString("en-US", { weekday: "long" });
 };
 
 const initialLabel = formatDate(selectedDay);

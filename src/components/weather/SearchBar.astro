@@ -1,0 +1,40 @@
+---
+import Icon from "../ui/Icon.astro";
+import Button from "../ui/Button.astro";
+---
+
+<div class="flex flex-col gap-2 py-8 relative z-50">
+    <div class="flex items-center gap-2 relative w-full p-2 text-white">
+        <input
+            id="search-input"
+            type="text"
+            autocomplete="off"
+            placeholder="Search for a place..."
+            class="w-full p-2 pl-10 theme-card peer transition-all focus:pl-2 outline-none text-white placeholder-white/50"
+        />
+
+        <Icon
+            name="search"
+            class="absolute text-white left-4 top-1/2 -translate-y-1/2 transition-all peer-focus:opacity-0 peer-focus:scale-75 pointer-events-none"
+        />
+
+        <ul
+            id="suggestions-list"
+            class="absolute m-2 top-full left-0 w-full mt-2 bg-neutral-800 border border-white/10 rounded-xl shadow-2xl overflow-hidden hidden max-h-60 overflow-y-auto z-50"
+        >
+        </ul>
+    </div>
+
+    <div id="search-btn-wrapper" class="w-full">
+        <Button>Search</Button>
+    </div>
+</div>
+
+<script>
+    // Importamos la lógica desde el archivo TypeScript externo
+    // Asegúrate de que la ruta "../../scripts/searchLogic" sea correcta según tus carpetas
+    import { initSearch } from "../../scripts/SearchLogic.ts";
+
+    // Iniciamos el componente
+    initSearch();
+</script>
