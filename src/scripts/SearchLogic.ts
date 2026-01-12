@@ -40,10 +40,32 @@ export const initSearch = () => {
 
     // 1. Input: Llama al servicio (searchCitySuggestions)
     refs.input.addEventListener("input", (e: any) => {
+        const query = e.target.value;
         clearTimeout(timeout);
+        
+        if (query.length < 2) {
+            refs.list.classList.add("hidden");
+            return;
+        }
+
         timeout = setTimeout(async () => {
-            // AQUI ESTÁ EL CAMBIO: Usamos la función importada
-            const results = await searchCitySuggestions(e.target.value);
+            // Mostrar "Search in progress" dentro del UL
+            refs.list.innerHTML = `
+                <li class="m-2 p-3 rounded-lg flex items-center gap-3 text-white/70">
+                    <svg class="animate-spin size-5 text-white" aria-hidden="true">
+                        <use href="/icons.svg#loading"></use>
+                    </svg>
+                    <span class="text-sm font-medium">Search in progress...</span>
+                </li>
+            `;
+            refs.list.classList.remove("hidden");
+            
+            // Usamos Promise.all para asegurar que el loader se vea al menos 1 segundo
+            const [results] = await Promise.all([
+                searchCitySuggestions(query),
+                new Promise(resolve => setTimeout(resolve, 1000))
+            ]);
+
             showResults(results);
         }, 300);
     });
