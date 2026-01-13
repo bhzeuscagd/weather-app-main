@@ -18,7 +18,24 @@
 --color-blue-500: #4455DA;
 --color-blue-700: #2D1C9C;
 
---bg-today: url("./images/icons.svg#bg-today-small");
+--bg-today: url("/images/icons.svg#bg-today-small");
+}
+
+/* 
+   ESTADO DE CARGA (SKELETONS)
+   Cuando el body tiene la clase .is-searching, ocultamos el contenido real
+   y mostramos los skeletons.
+*/
+.loading-layer {
+    display: none;
+}
+
+body.is-searching .loading-layer {
+    display: block;
+}
+
+body.is-searching .weather-content {
+    display: none;
 }
 
 .border-hover{

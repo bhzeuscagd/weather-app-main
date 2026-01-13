@@ -1,5 +1,6 @@
 // 1. IMPORTAMOS LA FUNCIÓN DEL SERVICIO
 import { searchCitySuggestions } from "../services/weather";
+import { navigate } from "astro:transitions/client";
 
 export const initSearch = () => {
     const refs = {
@@ -34,7 +35,12 @@ export const initSearch = () => {
     const navigateTo = (fullLocation: string) => {
         const url = new URL(window.location.href);
         url.searchParams.set("city", fullLocation);
-        window.location.href = url.toString();
+        
+        // Activamos estado de carga visual
+        document.body.classList.add("is-searching");
+        
+        // Navegación tipo SPA (mantiene el estado de is-searching hasta que cambia la pág)
+        navigate(url.toString());
     };
 
     // --- EVENTOS ---
