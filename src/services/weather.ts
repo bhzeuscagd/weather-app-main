@@ -1,5 +1,11 @@
 // --- 1. INTERFACES ---
 
+// 1. Definimos una interfaz para las unidades
+export interface WeatherUnits {
+    temperature_unit?: "celsius" | "fahrenheit";
+    wind_speed_unit?: "kmh" | "mph" | "kn" | "ms";
+    precipitation_unit?: "mm" | "inch";
+}
 
 // A. CREA ESTA NUEVA INTERFAZ (Define cómo es UNA ciudad)
 export interface CityInfo {
@@ -81,7 +87,7 @@ export const getCoordinates = async (city: string) => {
 /**
  * Obtiene el clima completo (Actual, Diario y Por Hora)
  */
-export const getWeather = async (lat: number, lon: number) => {
+export const getWeather = async (lat: number, lon: number, units: WeatherUnits ={}) => {
   const params = new URLSearchParams({
     latitude: lat.toString(),
     longitude: lon.toString(),
@@ -89,6 +95,11 @@ export const getWeather = async (lat: number, lon: number) => {
     daily: "weather_code,temperature_2m_max,temperature_2m_min,precipitation_sum",
     hourly: "temperature_2m,weather_code", // <--- IMPORTANTE: Esto trae las horas
     timezone: "auto",
+
+    // 3. APLICAMOS LAS UNIDADES DINÁMICAS
+    temperature_unit: units.temperature_unit || "celsius",
+    wind_speed_unit: units.wind_speed_unit || "kmh",
+    precipitation_unit: units.precipitation_unit || "mm",
   });
 
   const url = `https://api.open-meteo.com/v1/forecast?${params.toString()}`;
@@ -139,14 +150,21 @@ export const formatHourlyData = (hourlyData: WeatherData['hourly'], limit = 24) 
  */
 export const loadWeatherFromUrl = async (searchParams: URLSearchParams) => {
   const city = searchParams.get("city") || "Bogota";
+
+  // Extraemos las unidades de la URL del navegador
+  const units: WeatherUnits = {
+      temperature_unit: (searchParams.get("temperature_unit") as any) || "celsius",
+      wind_speed_unit: (searchParams.get("wind_speed_unit") as any) || "kmh",
+      precipitation_unit: (searchParams.get("precipitation_unit") as any) || "mm"
+  };
   const coords = await getCoordinates(city); // Esto devuelve CityInfo o undefined
   
   if (!coords) return null;
 
-  const weather = await getWeather(coords.latitude, coords.longitude);
+  const weather = await getWeather(coords.latitude, coords.longitude, units);
   
   // TypeScript ahora sabe que 'coords' es de tipo CityInfo
-  return weather ? { weather, geo: coords } : null;
+  return weather ? { weather, geo: coords, units } : null;
 };
 
 /**

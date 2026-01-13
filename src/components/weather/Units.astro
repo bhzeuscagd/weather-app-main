@@ -1,8 +1,14 @@
 ---
 // src/components/weather/UnitSelector.astro
-import Icon from "../ui/Icon.astro";
+import Icon from "../ui/Icon.astro"; // Ajusta rutas si es necesario
 import Options from "./ui_button/Options.astro";
 
+// 1. LEER ESTADO ACTUAL DE LA URL
+const currentTemp = Astro.url.searchParams.get("temperature_unit") || "celsius";
+const currentWind = Astro.url.searchParams.get("wind_speed_unit") || "kmh";
+const currentPrecip = Astro.url.searchParams.get("precipitation_unit") || "mm";
+
+// Configuraciones (tal cual las tenías, asegurando que dataunit coincida con la API)
 const TemperatureOptions = [
     { label: "Celsius (°C)", dataunit: "celsius" },
     { label: "Fahrenheit (°F)", dataunit: "fahrenheit" },
@@ -14,43 +20,37 @@ const WindOptions = [
 ];
 
 const PrecipitationOptions = [
-    { label: "Milimeter (mm)", dataunit: "mm" },
+    { label: "Millimeter (mm)", dataunit: "mm" },
     { label: "Inch (in)", dataunit: "inch" },
 ];
-
-// Recibimos la unidad actual para saber cuál marcar con el "check"
-interface Props {
-    currentUnit: "metric" | "imperial";
-}
-
-const { currentUnit } = Astro.props;
-const isMetric = currentUnit === "metric";
-
-const currentTemp = "celsius";
-const currentWind = "kmh";
-const currentPrecip = "mm";
 ---
 
-<dropdown class="relative inline-block text-left z-50 group">
+<div class="relative inline-block text-left z-100 group">
     <button
-        class="font-DMSans inline-flex w-full justify-center align-center gap-2 rounded-md bg-white/10 px-2 py-1 text-sm text-white inset-ring-1 inset-ring-white/5 hover:bg-white/20 hover:border-black hover:border-solid hover:border-2 hover:ring-2 hover:ring-white"
+        class="font-DMSans inline-flex w-full justify-center align-center gap-2 rounded-md bg-neutral-800 px-2 py-1 text-sm text-white inset-ring-1 inset-ring-white/5 hover:bg-white/20 hover:border-black hover:border-solid hover:border-2 hover:ring-2 hover:ring-white"
     >
-        <Icon name="units" class="w-3 h-5 text-white" />
+        <Icon name="units" class="w-4 h-4 text-white" />
         <span>Units</span>
-        <Icon name="dropdown" class="w-2.5 h-5 text-white align-center" />
+        <Icon name="dropdown" class="w-3 h-3 text-white opacity-70" />
     </button>
 
     <menu
-        class="absolute right-0 top-full mt-2 group-hover:block hidden group-focus-within:block w-48 origin-top-right divide-y divide-white/10 rounded-md bg-white/10 outline-1 border border-white/30 transition transition-discrete backdrop-blur-md shadow-sm shadow-white/20"
+        id="unit-menu"
+        class="absolute right-0 top-full mt-2 group-hover:block hidden group-focus-within:block w-48 origin-top-right divide-y divide-white/10 rounded-md bg-neutral-800 outline-1 border border-white/30 transition transition-discrete shadow-sm shadow-white/20"
     >
-        <div class="p-1">
+        <div class="p-2 mb-2 border-b border-white/5">
             <button
-                class="border-hover rounded-md block w-full text-left px-2 py-1 text-sm text-gray-300 hover:bg-white/5 hover:text-white transition-colors"
-                id="unit-toggle"
+                id="toggle-system"
+                class="border-hover rounded-md block w-full text-left px-2 py-1 text-sm text-white font-semibold font-DMSans hover:bg-white/5 hover:text-white transition-colors"
             >
-                Switch to {isMetric ? "imperial" : "metric"}
+                {
+                    currentTemp === "celsius"
+                        ? "Switch to Imperial"
+                        : "Switch to Metric"
+                }
             </button>
         </div>
+
         <Options
             title="Temperature"
             options={TemperatureOptions}
@@ -67,4 +67,53 @@ const currentPrecip = "mm";
             activeUnit={currentPrecip}
         />
     </menu>
-</dropdown>
+</div>
+<script>
+    const menu = document.getElementById("unit-menu");
+    const toggleBtn = document.getElementById("toggle-system");
+
+    // 1. SOLUCIÓN: Le decimos explícitamente que son strings
+    const setUnit = (param: string, value: string) => {
+        const url = new URL(window.location.href);
+        url.searchParams.set(param, value);
+        window.location.href = url.toString();
+    };
+
+    menu?.addEventListener("click", (e) => {
+        // 2. SOLUCIÓN: Le decimos que el target es un elemento HTML real
+        const target = e.target as HTMLElement;
+        const btn = target.closest("button[data-unit]");
+
+        if (!btn) return;
+
+        const unit = btn.getAttribute("data-unit");
+
+        if (unit) {
+            // TypeScript ahora sabe que setUnit recibe strings, así que esto es válido
+            if (unit === "celsius" || unit === "fahrenheit") {
+                setUnit("temperature_unit", unit);
+            } else if (unit === "kmh" || unit === "mph") {
+                setUnit("wind_speed_unit", unit);
+            } else if (unit === "mm" || unit === "inch") {
+                setUnit("precipitation_unit", unit);
+            }
+        }
+    });
+
+    toggleBtn?.addEventListener("click", () => {
+        const url = new URL(window.location.href);
+        const isMetric =
+            url.searchParams.get("temperature_unit") !== "fahrenheit";
+
+        if (isMetric) {
+            url.searchParams.set("temperature_unit", "fahrenheit");
+            url.searchParams.set("wind_speed_unit", "mph");
+            url.searchParams.set("precipitation_unit", "inch");
+        } else {
+            url.searchParams.set("temperature_unit", "celsius");
+            url.searchParams.set("wind_speed_unit", "kmh");
+            url.searchParams.set("precipitation_unit", "mm");
+        }
+        window.location.href = url.toString();
+    });
+</script>

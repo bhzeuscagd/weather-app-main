@@ -6,13 +6,32 @@ import HourlyForecast from "../components/weather/HourlyForecast.astro";
 import DailyForecast from "../components/weather/DailyForecast.astro";
 import StatCard from "../components/weather/StatCard.astro";
 import SearchBar from "../components/weather/SearchBar.astro";
+import ErrorState from "../Error/ErrorState.astro";
+
+import { loadWeatherFromUrl } from "../services/weather";
+const weatherData = await loadWeatherFromUrl(Astro.url.searchParams);
 ---
 
 <Layout>
+    {/* === ZONA FIJA === */}
+    {/* Estos componentes se renderizan SIEMPRE, pase lo que pase */}
     <Header />
     <Hero />
     <SearchBar />
-    <StatCard />
-    <DailyForecast />
-    <HourlyForecast />
+
+    {/* === ZONA DINÁMICA === */}
+
+    {
+        weatherData ? (
+            /* OPCIÓN A: ENCONTRAMOS LA CIUDAD -> MUESTRA EL CLIMA */
+            <>
+                <StatCard />
+                <DailyForecast />
+                <HourlyForecast />
+            </>
+        ) : (
+            /* OPCIÓN B: NO ENCONTRAMOS LA CIUDAD -> MUESTRA EL ERROR */
+            <ErrorState />
+        )
+    }
 </Layout>

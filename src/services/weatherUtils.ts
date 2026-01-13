@@ -1,5 +1,5 @@
 import type { DailyData, HourlyData } from "./weather";
-import type { WeatherData, CityInfo } from "./weather";
+import type { WeatherData, CityInfo, WeatherUnits } from "./weather";
 
 
 export const getFilteredHours = (hourly: HourlyData, selectedDate: string) => {
@@ -48,8 +48,11 @@ export const getFormattedDaily = (daily: DailyData) => {
 };
 
 
-export const getStackCardData = (weather: WeatherData, geo: CityInfo) => {
+export const getStackCardData = (weather: WeatherData, geo: CityInfo, units: WeatherUnits) => {
     // 1. Fecha: "Sunday, Jan 11, 2026"
+    const tempUnit = units.temperature_unit === "fahrenheit" ? "°F" : "°C";
+    const windUnit = units.wind_speed_unit === "mph" ? "mph" : "km/h";
+    const precipUnit = units.precipitation_unit === "inch" ? "in" : "mm";
     const now = new Date();
     const dateStr = now.toLocaleDateString('en-US', { 
         weekday: 'long', 
@@ -63,13 +66,16 @@ export const getStackCardData = (weather: WeatherData, geo: CityInfo) => {
         country: geo.country,
         date: dateStr,
         temp: Math.round(weather.daily.temperature_2m_max[0]),
+        tempUnit: tempUnit,
         code: weather.daily.weather_code[0],
-        // Stats
         feelsLike: Math.round(weather.current.apparent_temperature),
         humidity: weather.current.relative_humidity_2m,
         wind: Math.round(weather.current.wind_speed_10m),
-        precip: weather.daily.precipitation_sum[0]
+        windUnit: windUnit,
+        precip: weather.daily.precipitation_sum[0],
+        precipUnit: precipUnit
     };
+
 };
 
 
