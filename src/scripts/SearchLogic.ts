@@ -5,9 +5,10 @@ export const initSearch = () => {
     const refs = {
         input: document.getElementById("search-input") as HTMLInputElement,
         list: document.getElementById("suggestions-list") as HTMLUListElement,
+        btn: document.getElementById("search-btn-wrapper")?.querySelector("button") as HTMLButtonElement,
     };
 
-    if (!refs.input || !refs.list) return;
+    if (!refs.input || !refs.list || !refs.btn) return;
 
     let timeout: any;
 
@@ -89,7 +90,15 @@ export const initSearch = () => {
         }
     });
 
-    // 4. Click fuera
+    // 4. Click en Botón
+    refs.btn.addEventListener("click", () => {
+        if (refs.input.value) {
+            refs.list.classList.add("hidden");
+            navigateTo(refs.input.value);
+        }
+    });
+
+    // 5. Click fuera
     document.addEventListener("click", (e: any) => {
         if (!refs.input.contains(e.target) && !refs.list.contains(e.target)) {
             refs.list.classList.add("hidden");
