@@ -25,9 +25,15 @@ const weatherData = await loadWeatherFromUrl(Astro.url.searchParams);
         weatherData ? (
             /* OPCIÓN A: ENCONTRAMOS LA CIUDAD -> MUESTRA EL CLIMA */
             <>
-                <StatCard />
-                <DailyForecast />
-                <HourlyForecast />
+                <div class="flex flex-row gap-5 max-w-7xl my-0 mx-20 min-h-4/5">
+                    <div class="flex-3 flex-col gap-5">
+                        <StatCard />
+                        <DailyForecast />
+                    </div>
+                    <aside class="flex-1">
+                        <HourlyForecast />
+                    </aside>
+                </div>
             </>
         ) : (
             /* OPCIÓN B: NO ENCONTRAMOS LA CIUDAD -> MUESTRA EL ERROR */

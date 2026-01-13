@@ -22,13 +22,17 @@ const info = getStackCardData(
 );
 ---
 
-<section class="max-w-[450px] p-2 flex justify-center items-center">
+<section
+    class="max-w-[450px] p-2 flex justify-center items-center lg:min-w-full"
+>
     {/* YA NO HAY IF/ELSE, SOLO EL CONTENIDO DEL CLIMA */}
 
-    <div class="grid grid-cols-2 grid-rows-8 h-[500px] w-[450px] gap-4">
+    <div
+        class="grid grid-cols-2 grid-rows-8 h-[500px] w-[450px] gap-4 lg:grid-cols-4 lg:grid-rows-6 lg:min-w-full lg:h-[400px]"
+    >
         {/* 1. MAIN CARD */}
         <div
-            class="col-span-2 row-span-4 theme-card bg-[url('/images/bg-today-small.svg')] bg-cover bg-center bg-no-repeat p-5 flex flex-col justify-between relative overflow-hidden group"
+            class="col-span-2 row-span-4 lg:col-span-4 lg:row-span-4 theme-card bg-[url('/images/bg-today-small.svg')] bg-cover bg-center bg-no-repeat p-5 flex flex-col justify-between relative overflow-hidden group"
         >
             <div class="absolute inset-0 bg-black/10 z-0"></div>
 
@@ -73,7 +77,9 @@ const info = getStackCardData(
         </div>
 
         {/* 2. FEELS LIKE */}
-        <div class="row-span-2 row-start-5 theme-card theme-card-info-main">
+        <div
+            class="row-span-2 row-start-5 theme-card lg:col-span-1 lg:row-span-2 theme-card-info-main"
+        >
             <span class="theme-card-info-sub">Feels like</span>
             <span class="text-2xl font-DMSans text-white">
                 {info.feelsLike}{info.tempUnit}
@@ -81,7 +87,9 @@ const info = getStackCardData(
         </div>
 
         {/* 3. HUMIDITY */}
-        <div class="row-span-2 row-start-5 theme-card theme-card-info-main">
+        <div
+            class="row-span-2 row-start-5 theme-card lg:col-span-1 lg:row-span-2 theme-card-info-main"
+        >
             <span class="theme-card-info-sub">Humidity</span>
             <span class="text-2xl font-DMSans text-white">
                 {info.humidity}%
@@ -89,7 +97,9 @@ const info = getStackCardData(
         </div>
 
         {/* 4. WIND */}
-        <div class="row-span-2 row-start-7 theme-card theme-card-info-main">
+        <div
+            class="row-span-2 row-start-7 theme-card lg:col-span-1 lg:row-span-2 theme-card-info-main"
+        >
             <span class="theme-card-info-sub">Wind</span>
             <div class="flex items-baseline gap-1">
                 <span class="text-2xl font-DMSans text-white">
@@ -102,7 +112,9 @@ const info = getStackCardData(
         </div>
 
         {/* 5. PRECIPITATION */}
-        <div class="row-span-2 row-start-7 theme-card theme-card-info-main">
+        <div
+            class="row-span-2 row-start-7 theme-card lg:col-span-1 lg:row-span-2 theme-card-info-main"
+        >
             <span class="theme-card-info-sub">Precipitation</span>
             <div class="flex items-baseline gap-1">
                 <span class="text-2xl font-DMSans text-white">

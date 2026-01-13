@@ -3,7 +3,9 @@ import Icon from "../ui/Icon.astro";
 import Button from "../ui/Button.astro";
 ---
 
-<div class="flex flex-col gap-2 py-8 relative z-50">
+<div
+    class="flex flex-col gap-2 py-8 relative z-50 lg:max-w-[800px] lg:flex-row lg:items-center lg:gap-0 lg:my-0 lg:mx-auto"
+>
     <div class="flex items-center gap-2 relative w-full p-2 text-white">
         <input
             id="search-input"
@@ -25,7 +27,7 @@ import Button from "../ui/Button.astro";
         </ul>
     </div>
 
-    <div id="search-btn-wrapper" class="w-full">
+    <div id="search-btn-wrapper" class="w-full lg:w-auto">
         <Button>Search</Button>
     </div>
 </div>

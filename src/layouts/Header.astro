@@ -3,8 +3,9 @@ import Icon from "../components/ui/Icon.astro";
 import Units from "../components/weather/Units.astro";
 ---
 
-<header class="flex justify-between items-center px-2 -mt-10">
-    <Icon name="logo" class="w-36 h-auto" />
+<header class="flex justify-between items-center px-2 -mt-10
+lg:mx-20 lg:-mt-3">
+    <Icon name="logo" class="w-36 h-auto lg:w-48 lg:h-auto" />
     <div>
         <Units currentUnit={Astro.props.currentUnit} />
     </div>
