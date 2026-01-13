@@ -32,15 +32,17 @@ const info = getStackCardData(
     >
         {/* 1. MAIN CARD */}
         <div
-            class="col-span-2 row-span-4 lg:col-span-4 lg:row-span-4 theme-card bg-[url('/images/bg-today-small.svg')] bg-cover bg-center bg-no-repeat p-5 flex flex-col justify-between relative overflow-hidden group"
+            class="col-span-2 row-span-4 lg:flex lg:flex-row lg:items-center lg:justify-between lg:col-span-4 lg:row-span-4 theme-card bg-[url('/images/bg-today-small.svg')] lg:bg-[url('/images/bg-today-large.svg')] bg-cover bg-center bg-no-repeat p-5 flex flex-col justify-between relative overflow-hidden group"
         >
             <div class="absolute inset-0 bg-black/10 z-0"></div>
 
-            <div class="z-10 flex flex-col items-center">
+            <div
+                class="z-10 flex flex-col items-center lg:items-start lg:text-start"
+            >
                 <h2
-                    class="font-bold text-white font-DMSans text-center text-2xl drop-shadow-md"
+                    class="font-bold text-white font-DMSans text-center text-2xl drop-shadow-md lg:text-start"
                 >
-                    {info.city}, <span class="text-white/90"
+                    {info.city}, <span class="text-white/90 lg:text-start"
                         >{info.country}</span
                     >
                 </h2>
@@ -51,8 +53,10 @@ const info = getStackCardData(
                 </p>
             </div>
 
-            <div class="flex items-center justify-between z-10 mt-2 px-2">
-                <div class="w-32 h-32">
+            <div
+                class="flex items-center justify-between z-10 mt-2 px-2 lg:gap-10"
+            >
+                <div class="w-32 h-32 lg:w-28 lg:h-28">
                     <WeatherIcon
                         code={info.code}
                         class="w-full h-full drop-shadow-2xl filter"

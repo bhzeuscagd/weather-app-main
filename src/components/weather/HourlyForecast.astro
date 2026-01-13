@@ -26,9 +26,16 @@ const allDaysData = weatherData
           };
       })
     : [];
+
+const { class: className } = Astro.props;
 ---
 
-<section class="theme-card flex flex-col gap-2 max-w-[340px] m-2 p-2">
+<section
+    class:list={[
+        "theme-card flex flex-col gap-2 max-w-[340px] m-2 p-2 lg:m-0",
+        className,
+    ]}
+>
     <header class="flex flex-row justify-between px-2 items-center">
         <h2 class="font-DMSans text-xl font-semibold text-white">
             Hourly Forecast

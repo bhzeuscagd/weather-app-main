@@ -8,16 +8,18 @@ const response = await loadWeatherFromUrl(Astro.url.searchParams);
 // 2. DESEMPAQUETAMOS
 // Si hubo respuesta, sacamos la parte '.weather'. Si no, es null.
 const weatherData = response ? response.weather : null;
+
+const { class: className } = Astro.props;
 ---
 
-<section class="flex flex-col gap-4 p-2 lg:p-0">
+<section class:list={["flex flex-col gap-4 p-2 lg:p-0", className]}>
     <header class="font-DMSans font-semibold text-white">
         <h2>Daily Forecast</h2>
     </header>
 
-    <div>
+    <div class="flex-1 flex flex-col">
         <div
-            class="grid grid-cols-3 grid-rows-6 gap-3 h-[500px] lg:grid-cols-7 lg:grid-rows-1 lg:h-full"
+            class="grid grid-cols-3 grid-rows-6 gap-3 h-[500px] lg:grid-cols-7 lg:grid-rows-1 lg:flex-1 lg:items-stretch"
         >
             {/* Ahora weatherData ya es el objeto de clima correcto */}
             {
