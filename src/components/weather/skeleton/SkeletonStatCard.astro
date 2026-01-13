@@ -1,0 +1,47 @@
+---
+
+---
+
+<section
+    class="max-w-[450px] p-2 flex justify-center items-center lg:min-w-full"
+>
+    <div
+        class="grid grid-cols-2 grid-rows-8 h-[500px] w-[450px] gap-4 lg:grid-cols-4 lg:grid-rows-6 lg:min-w-full lg:h-[400px]"
+    >
+        {/* 1. MAIN CARD SKELETON */}
+        <div
+            class="col-span-2 row-span-4 lg:col-span-4 lg:row-span-4 theme-card p-5 flex flex-col justify-center items-center relative overflow-hidden group"
+        >
+            <div class="flex flex-col items-center gap-4 animate-pulse">
+                <div class="flex gap-2">
+                    <div class="w-2 h-2 bg-white/20 rounded-full"></div>
+                    <div
+                        class="w-2 h-2 bg-white/20 rounded-full animate-bounce [animation-delay:0.2s]"
+                    >
+                    </div>
+                    <div
+                        class="w-2 h-2 bg-white/20 rounded-full animate-bounce [animation-delay:0.4s]"
+                    >
+                    </div>
+                </div>
+                <p class="text-white/30 font-DMSans font-medium text-lg">
+                    Loading...
+                </p>
+            </div>
+        </div>
+
+        {/* 2. METRIC CARDS SKELETONS */}
+        {
+            ["Feels Like", "Humidity", "Wind", "Precipitation"].map((label) => (
+                <div class="row-span-2 theme-card p-4 flex flex-col justify-between animate-pulse">
+                    <h3 class="text-white/30 text-xs font-DMSans font-semibold uppercase tracking-wider">
+                        {label}
+                    </h3>
+                    <div class="mt-4">
+                        <div class="h-8 w-12 bg-white/5 rounded-md" />
+                    </div>
+                </div>
+            ))
+        }
+    </div>
+</section>
