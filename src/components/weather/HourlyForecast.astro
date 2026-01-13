@@ -1,24 +1,24 @@
 ---
+// ==========================================
+// COMPONENTE: PRONÓSTICO POR HORAS (SIDEBAR)
+// ==========================================
+// Muestra la lista de temperaturas por hora.
+// - Permite cambiar de día usando 'OptionDays' (Tabs).
+// - Filtra las horas para mostrar solo 24h desde el momento actual (si es hoy) o desde las 00:00.
+
 import Hours from "./ui_HourlyForestcast/Hours.astro";
 import OptionDays from "./ui_HourlyForestcast/OptionDays.astro";
-import { getCoordinates, getWeather } from "../../services/weather.ts";
-import { getFilteredHours } from "../../services/weatherUtils.ts"; // Asegúrate que esta ruta esté bien
+import { getFilteredHours } from "../../services/weatherUtils.ts";
+
+const { class: className, weatherData } = Astro.props;
 
 // 1. FECHA LOCAL (Para marcar "hoy" correctamente)
-// Usamos 'sv-SE' porque devuelve formato ISO (YYYY-MM-DD) y respeta tu zona horaria local
 const now = new Date();
 const localDate = now.toLocaleDateString("sv-SE");
 
-const cityParam = Astro.url.searchParams.get("city") || "Bogota";
-const cityInfo = await getCoordinates(cityParam);
-const weatherData = cityInfo
-    ? await getWeather(cityInfo.latitude, cityInfo.longitude)
-    : null;
-
-// 2. ARREGLO DEL ERROR: Inicialización directa
-// Si hay weatherData, mapeamos los días. Si no, devolvemos array vacío.
+// 2. PROCESAMIENTO DE DATOS DIARIOS
 const allDaysData = weatherData
-    ? weatherData.daily.time.map((day) => {
+    ? weatherData.daily.time.map((day: string) => {
           return {
               date: day,
               // Llamamos a tu utilidad para obtener las horas de ESE día específico
@@ -27,7 +27,10 @@ const allDaysData = weatherData
       })
     : [];
 
-const { class: className } = Astro.props;
+// 4. SELECCIÓN INICIAL
+// Para evitar que la lista aparezca vacía si la zona horaria del servidor
+// es distinta a la de la ciudad buscada, usamos el PRIMER día de la data.
+const selectedDay = weatherData ? weatherData.daily.time[0] : localDate;
 ---
 
 <section
@@ -36,6 +39,7 @@ const { class: className } = Astro.props;
         className,
     ]}
 >
+    {/* HEADER: Título + Selector de Días */}
     <header class="flex flex-row justify-between px-2 items-center">
         <h2 class="font-DMSans text-xl font-semibold text-white">
             Hourly Forecast
@@ -45,21 +49,21 @@ const { class: className } = Astro.props;
             weatherData && (
                 <OptionDays
                     days={weatherData.daily.time}
-                    selectedDay={localDate}
+                    selectedDay={selectedDay}
                 />
             )
         }
     </header>
 
+    {/* LISTAS DE HORAS (Una por día, ocultas/visibles según selección) */}
     <div id="hours-container">
-        {/* Renderizamos las 7 listas de la semana */}
         {
-            allDaysData.map((dayData) =>
-                // Solo renderizamos si 'dayData.hours' no es null
+            allDaysData.map((dayData: any) =>
+                // Solo renderizamos si hay datos válidos para ese día
                 dayData.hours ? (
                     <div
                         id={`hours-${dayData.date}`}
-                        class={`hourly-list ${dayData.date === localDate ? "" : "hidden"}`}
+                        class={`hourly-list ${dayData.date === selectedDay ? "" : "hidden"}`}
                     >
                         <Hours hourly={dayData.hours} />
                     </div>
@@ -67,7 +71,7 @@ const { class: className } = Astro.props;
             )
         }
 
-        {/* Mensaje de carga o error si no hay datos */}
+        {/* Mensaje de carga o error si no hay datos disponibles */}
         {
             allDaysData.length === 0 && (
                 <p class="text-white/50 text-sm p-2">Cargando datos...</p>

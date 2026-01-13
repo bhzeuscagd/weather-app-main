@@ -1,11 +1,21 @@
 ---
+// ==========================================
+// LAYOUT: HEADER
+// ==========================================
+// Componente de cabecera que se muestra en todas las páginas.
+// Contiene:
+// 1. Logo de la aplicación.
+// 2. Selector de Unidades (Celsius/Fahrenheit, etc).
+
 import Icon from "../components/ui/Icon.astro";
 import Units from "../components/weather/Units.astro";
 ---
 
-<header class="flex justify-between items-center px-2 -mt-10
-lg:mx-20 lg:-mt-3">
+<header class="flex justify-between items-center px-2 -mt-10 lg:mx-20 lg:-mt-3">
+    {/* Logo SVG responsivo */}
     <Icon name="logo" class="w-36 h-auto lg:w-48 lg:h-auto" />
+
+    {/* Selector de Unidades */}
     <div>
         <Units currentUnit={Astro.props.currentUnit} />
     </div>

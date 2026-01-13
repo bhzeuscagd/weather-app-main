@@ -1,4 +1,13 @@
 ---
+// ==========================================
+// LAYOUT PRINCIPAL (WRAPPER GLOBAL)
+// ==========================================
+// Este componente define la estructura HTML básica de toda la aplicación.
+// Incluye:
+// - Metadatos del HEAD (charset, viewport, titulo).
+// - Fuentes globales (Bricolage Grotesque, DM Sans).
+// - Estilos CSS globales.
+
 import "@fontsource-variable/bricolage-grotesque";
 import "@fontsource-variable/dm-sans";
 
@@ -12,9 +21,12 @@ import "../styles/global.css";
 		<meta name="viewport" content="width=device-width" />
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<meta name="generator" content={Astro.generator} />
-		<title>Astro Basics</title>
+		<title>Weather Now</title>
 	</head>
 	<body class="bg-neutral-900">
+		{
+			/* SLOT: Aquí se inyecta el contenido de las páginas (ej. index.astro) */
+		}
 		<slot />
 	</body>
 </html>

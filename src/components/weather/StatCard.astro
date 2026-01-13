@@ -1,36 +1,38 @@
 ---
-// Imports
+// ==========================================
+// COMPONENTE: TARJETA PRINCIPAL (ESTADÍSTICAS)
+// ==========================================
+// Muestra el resumen del clima actual:
+// - Tarjeta grande con Temperatura, Ciudad e Ícono.
+// - 4 Tarjetas pequeñas con métricas (Sensación térmica, Humedad, Viento, Precipitación).
+
 import WeatherIcon from "../weather/ui_HourlyForestcast/WeatherIcon.astro";
-import { loadWeatherFromUrl } from "../../services/weather.ts";
 import { getStackCardData } from "../../services/weatherUtils.ts";
 
-// 1. Carga Autónoma
-const dataResponse = await loadWeatherFromUrl(Astro.url.searchParams);
+// 1. RECEPCIÓN DE DATOS POR PROPS
+const { weatherData } = Astro.props;
 
 // 2. GUARDIA DE SEGURIDAD
-// Como index.astro ya se encargó de verificar errores, aquí asumimos que hay datos.
-// Pero si fallara, esto evita que la página explote.
-if (!dataResponse) {
+if (!weatherData) {
     return null;
 }
 
-// 3. Procesamos los datos con seguridad
+// 3. TRANSFORMACIÓN DE DATOS
 const info = getStackCardData(
-    dataResponse.weather,
-    dataResponse.geo,
-    dataResponse.units,
+    weatherData.weather,
+    weatherData.geo,
+    weatherData.units,
 );
 ---
 
 <section
     class="max-w-[450px] p-2 flex justify-center items-center lg:min-w-full"
 >
-    {/* YA NO HAY IF/ELSE, SOLO EL CONTENIDO DEL CLIMA */}
-
+    {/* GRID PRINCIPAL: 2 columnas en mobile, 4 en desktop */}
     <div
         class="grid grid-cols-2 grid-rows-8 h-[500px] w-[450px] gap-4 lg:grid-cols-4 lg:grid-rows-6 lg:min-w-full lg:h-[400px]"
     >
-        {/* 1. MAIN CARD */}
+        {/* === 1. TARJETA CLIMA ACTUAL (MAIN CARD) === */}
         <div
             class="col-span-2 row-span-4 lg:flex lg:flex-row lg:items-center lg:justify-between lg:col-span-4 lg:row-span-4 theme-card bg-[url('/images/bg-today-small.svg')] lg:bg-[url('/images/bg-today-large.svg')] bg-cover bg-center bg-no-repeat p-5 flex flex-col justify-between relative overflow-hidden group"
         >
@@ -56,6 +58,7 @@ const info = getStackCardData(
             <div
                 class="flex items-center justify-between z-10 mt-2 px-2 lg:gap-10"
             >
+                {/* ÍCONO DEL CLIMA */}
                 <div class="w-32 h-32 lg:w-28 lg:h-28">
                     <WeatherIcon
                         code={info.code}
@@ -63,6 +66,7 @@ const info = getStackCardData(
                     />
                 </div>
 
+                {/* TEMPERATURA */}
                 <div class="flex flex-col items-end">
                     <div class="flex items-start">
                         <span
@@ -80,7 +84,9 @@ const info = getStackCardData(
             </div>
         </div>
 
-        {/* 2. FEELS LIKE */}
+        {/* === 2. TARJETAS PEQUEÑAS (GRIDS) === */}
+
+        {/* FEELS LIKE */}
         <div
             class="row-span-2 row-start-5 theme-card lg:col-span-1 lg:row-span-2 theme-card-info-main"
         >
@@ -90,7 +96,7 @@ const info = getStackCardData(
             </span>
         </div>
 
-        {/* 3. HUMIDITY */}
+        {/* HUMIDITY */}
         <div
             class="row-span-2 row-start-5 theme-card lg:col-span-1 lg:row-span-2 theme-card-info-main"
         >
@@ -100,7 +106,7 @@ const info = getStackCardData(
             </span>
         </div>
 
-        {/* 4. WIND */}
+        {/* WIND */}
         <div
             class="row-span-2 row-start-7 theme-card lg:col-span-1 lg:row-span-2 theme-card-info-main"
         >
@@ -115,7 +121,7 @@ const info = getStackCardData(
             </div>
         </div>
 
-        {/* 5. PRECIPITATION */}
+        {/* PRECIPITATION */}
         <div
             class="row-span-2 row-start-7 theme-card lg:col-span-1 lg:row-span-2 theme-card-info-main"
         >

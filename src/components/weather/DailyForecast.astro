@@ -1,15 +1,14 @@
 ---
+// ==========================================
+// COMPONENTE: PRONÓSTICO DIARIO (7 DÍAS)
+// ==========================================
+// Muestra una grilla con el clima para los próximos 7 días.
+// Responsivo: 3 columnas en móvil -> 7 columnas en escritorio.
+
 import WeatherDataDaily from "./ui_DailyForecast/weatherDataDaily.astro";
-import { loadWeatherFromUrl } from "../../services/weather.ts";
 
-// 1. CARGAMOS LA DATA (Ahora trae { weather, geo })
-const response = await loadWeatherFromUrl(Astro.url.searchParams);
-
-// 2. DESEMPAQUETAMOS
-// Si hubo respuesta, sacamos la parte '.weather'. Si no, es null.
-const weatherData = response ? response.weather : null;
-
-const { class: className } = Astro.props;
+// 1. RECEPCIÓN DE DATOS POR PROPS
+const { class: className, weatherData } = Astro.props;
 ---
 
 <section class:list={["flex flex-col gap-4 p-2 lg:p-0", className]}>
@@ -18,10 +17,16 @@ const { class: className } = Astro.props;
     </header>
 
     <div class="flex-1 flex flex-col">
+        {
+            /* GRID LAYOUT:
+            - Mobile: 3 columnas, 6 filas (se apilan).
+            - Desktop: 7 columnas, 1 fila (horizontal strip).
+        */
+        }
         <div
             class="grid grid-cols-3 grid-rows-6 gap-3 h-[500px] lg:grid-cols-7 lg:grid-rows-1 lg:flex-1 lg:items-stretch"
         >
-            {/* Ahora weatherData ya es el objeto de clima correcto */}
+            {/* Renderizado condicional del contenido de los días */}
             {
                 weatherData ? (
                     <WeatherDataDaily daily={weatherData.daily} />
