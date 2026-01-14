@@ -88,7 +88,7 @@ const weatherData = await loadWeatherFromUrl(Astro.url.searchParams);
                         />
                     </div>
                     {/* COLUMNA DERECHA (Sidebar): Pronóstico por horas */}
-                    <aside class="flex-1 flex flex-col h-auto">
+                    <aside class="flex-1 flex flex-col h-auto items-center lg:items-stretch">
                         <HourlyForecast
                             weatherData={weatherData.weather}
                             class="flex-1 h-full"
