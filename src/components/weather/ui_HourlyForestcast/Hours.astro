@@ -25,7 +25,7 @@ const horasParaMostrar = hourly.time.map((time, i) => {
 ---
 
 <div
-    class="flex flex-col gap-3 p-2 max-h-[560px] overflow-y-auto scrollbar-thin scrollbar-thumb-white/20 scrollbar-track-transparent pr-2"
+    class="flex flex-col gap-3 p-2 max-h-[560px] overflow-y-auto pr-2 no-scrollbar"
 >
     {
         horasParaMostrar.map((item) => (
@@ -44,3 +44,16 @@ const horasParaMostrar = hourly.time.map((time, i) => {
         ))
     }
 </div>
+
+<style>
+    /* Hide scrollbar for Chrome, Safari and Opera */
+    .no-scrollbar::-webkit-scrollbar {
+        display: none;
+    }
+
+    /* Hide scrollbar for IE, Edge and Firefox */
+    .no-scrollbar {
+        -ms-overflow-style: none; /* IE and Edge */
+        scrollbar-width: none; /* Firefox */
+    }
+</style>
