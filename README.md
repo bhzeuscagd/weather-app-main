@@ -35,7 +35,7 @@ Users should be able to:
 ### Links
 
 - Solution URL: [GitHub Repository](https://github.com/bhzeuscagd/weather-app-main)
-- Live Site URL: [Vercel Deployment](https://weather-app-main.vercel.app) *(Update if necessary)*
+- Live Site URL: [Vercel Deployment](https://weather-app-main-rho.vercel.app/)
 
 ## Installation and Usage
 
