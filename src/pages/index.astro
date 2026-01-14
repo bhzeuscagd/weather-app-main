@@ -52,7 +52,7 @@ const weatherData = await loadWeatherFromUrl(Astro.url.searchParams);
     }
     <div class="loading-layer">
         <div
-            class="flex flex-col gap-5 max-w-7xl my-0 mx-auto px-4 min-h-4/5 items-stretch pb-10 lg:flex-row lg:mx-20 lg:px-0"
+            class="flex flex-col gap-5 max-w-7xl my-0 mx-auto px-4 min-h-4/5 items-stretch pb-10 md:px-8 lg:flex-row lg:mx-20 lg:px-0"
         >
             <div class="flex-3 flex flex-col gap-5 h-auto">
                 <SkeletonStatCard />
@@ -78,7 +78,7 @@ const weatherData = await loadWeatherFromUrl(Astro.url.searchParams);
                CASO ÉXITO: Tenemos datos del clima.
                Renderizamos el dashboard principal dividido en dos columnas para escritorio.
             */
-                <div class="flex flex-col gap-5 max-w-7xl my-0 mx-auto px-4 min-h-4/5 items-stretch pb-10 lg:flex-row lg:mx-20 lg:px-0">
+                <div class="flex flex-col gap-5 max-w-7xl my-0 mx-auto px-4 min-h-4/5 items-stretch pb-10 md:px-8 lg:flex-row lg:mx-20 lg:px-0">
                     {/* COLUMNA IZQUIERDA: Tarjeta principal y Pronóstico diario */}
                     <div class="flex-3 flex flex-col gap-5 h-auto">
                         <StatCard weatherData={weatherData} />
