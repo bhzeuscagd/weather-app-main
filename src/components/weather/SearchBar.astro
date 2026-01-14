@@ -55,4 +55,13 @@ import Button from "../ui/Button.astro";
 
     // Inicialización cuando el componente se monta en el cliente
     initSearch();
+
+    // IMPORTANTE: Con View Transitions, necesitamos reinicializar después de cada navegación
+    document.addEventListener("astro:page-load", () => {
+        // Removemos el estado de búsqueda
+        document.body.classList.remove("is-searching");
+
+        // Reinicializamos la búsqueda
+        initSearch();
+    });
 </script>
