@@ -58,47 +58,65 @@ const initialLabel = formatDate(selectedDay);
     </menu>
 </div>
 
-<script is:inline>
-    // Seleccionamos todos los botones de opción
-    const buttons = document.querySelectorAll(".day-option");
-    const labelSpan = document.getElementById("current-label");
+<script>
+    const initDayOptions = () => {
+        // Seleccionamos todos los botones de opción
+        const buttons = document.querySelectorAll(".day-option");
+        const labelSpan = document.getElementById("current-label");
 
-    buttons.forEach((btn) => {
-        btn.addEventListener("click", (e) => {
-            // 1. Obtener la fecha seleccionada
-            // Usamos currentTarget para asegurar que tomamos el botón, no el span interno
-            const targetBtn = e.currentTarget;
-            const date = targetBtn.getAttribute("data-date");
-            const label = targetBtn.getAttribute("data-label");
+        if (!buttons.length || !labelSpan) return;
 
-            // 2. Actualizar el texto del botón principal
-            if (labelSpan) labelSpan.textContent = label;
+        buttons.forEach((btn) => {
+            btn.addEventListener("click", (e) => {
+                // 1. Obtener la fecha seleccionada
+                // Usamos currentTarget para asegurar que tomamos el botón, no el span interno
+                const targetBtn = e.currentTarget;
+                const date = targetBtn.getAttribute("data-date");
+                const label = targetBtn.getAttribute("data-label");
 
-            // 3. LOGICA VISUAL DEL MENU (Checks y estilos)
-            // Quitamos estilo activo a todos
-            buttons.forEach((b) => {
-                b.classList.remove("bg-white/20", "text-white", "font-bold");
-                b.classList.add("text-gray-300");
-                const check = b.querySelector(".check-icon");
-                if (check) check.classList.add("hidden");
+                // 2. Actualizar el texto del botón principal
+                if (labelSpan) labelSpan.textContent = label;
+
+                // 3. LOGICA VISUAL DEL MENU (Checks y estilos)
+                // Quitamos estilo activo a todos
+                buttons.forEach((b) => {
+                    b.classList.remove(
+                        "bg-white/20",
+                        "text-white",
+                        "font-bold",
+                    );
+                    b.classList.add("text-gray-300");
+                    const check = b.querySelector(".check-icon");
+                    if (check) check.classList.add("hidden");
+                });
+                // Ponemos estilo al seleccionado
+                targetBtn.classList.remove("text-gray-300");
+                targetBtn.classList.add(
+                    "bg-white/20",
+                    "text-white",
+                    "font-bold",
+                );
+                const activeCheck = targetBtn.querySelector(".check-icon");
+                if (activeCheck) activeCheck.classList.remove("hidden");
+
+                // 4. MOSTRAR LA LISTA DE HORAS CORRECTA
+                // Ocultamos todas las listas
+                document.querySelectorAll(".hourly-list").forEach((list) => {
+                    list.classList.add("hidden");
+                });
+
+                // Mostramos la que tiene el ID correspondiente
+                const listToShow = document.getElementById(`hours-${date}`);
+                if (listToShow) {
+                    listToShow.classList.remove("hidden");
+                }
             });
-            // Ponemos estilo al seleccionado
-            targetBtn.classList.remove("text-gray-300");
-            targetBtn.classList.add("bg-white/20", "text-white", "font-bold");
-            const activeCheck = targetBtn.querySelector(".check-icon");
-            if (activeCheck) activeCheck.classList.remove("hidden");
-
-            // 4. MOSTRAR LA LISTA DE HORAS CORRECTA
-            // Ocultamos todas las listas
-            document.querySelectorAll(".hourly-list").forEach((list) => {
-                list.classList.add("hidden");
-            });
-
-            // Mostramos la que tiene el ID correspondiente
-            const listToShow = document.getElementById(`hours-${date}`);
-            if (listToShow) {
-                listToShow.classList.remove("hidden");
-            }
         });
-    });
+    };
+
+    // Inicialización inicial
+    initDayOptions();
+
+    // Reinicializar después de cada navegación con View Transitions
+    document.addEventListener("astro:page-load", initDayOptions);
 </script>

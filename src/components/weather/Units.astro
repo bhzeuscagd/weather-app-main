@@ -69,51 +69,61 @@ const PrecipitationOptions = [
     </menu>
 </div>
 <script>
-    const menu = document.getElementById("unit-menu");
-    const toggleBtn = document.getElementById("toggle-system");
+    const initUnits = () => {
+        const menu = document.getElementById("unit-menu");
+        const toggleBtn = document.getElementById("toggle-system");
 
-    // 1. SOLUCIÓN: Le decimos explícitamente que son strings
-    const setUnit = (param: string, value: string) => {
-        const url = new URL(window.location.href);
-        url.searchParams.set(param, value);
-        window.location.href = url.toString();
+        if (!menu || !toggleBtn) return;
+
+        // 1. SOLUCIÓN: Le decimos explícitamente que son strings
+        const setUnit = (param: string, value: string) => {
+            const url = new URL(window.location.href);
+            url.searchParams.set(param, value);
+            window.location.href = url.toString();
+        };
+
+        menu.addEventListener("click", (e) => {
+            // 2. SOLUCIÓN: Le decimos que el target es un elemento HTML real
+            const target = e.target as HTMLElement;
+            const btn = target.closest("button[data-unit]");
+
+            if (!btn) return;
+
+            const unit = btn.getAttribute("data-unit");
+
+            if (unit) {
+                // TypeScript ahora sabe que setUnit recibe strings, así que esto es válido
+                if (unit === "celsius" || unit === "fahrenheit") {
+                    setUnit("temperature_unit", unit);
+                } else if (unit === "kmh" || unit === "mph") {
+                    setUnit("wind_speed_unit", unit);
+                } else if (unit === "mm" || unit === "inch") {
+                    setUnit("precipitation_unit", unit);
+                }
+            }
+        });
+
+        toggleBtn.addEventListener("click", () => {
+            const url = new URL(window.location.href);
+            const isMetric =
+                url.searchParams.get("temperature_unit") !== "fahrenheit";
+
+            if (isMetric) {
+                url.searchParams.set("temperature_unit", "fahrenheit");
+                url.searchParams.set("wind_speed_unit", "mph");
+                url.searchParams.set("precipitation_unit", "inch");
+            } else {
+                url.searchParams.set("temperature_unit", "celsius");
+                url.searchParams.set("wind_speed_unit", "kmh");
+                url.searchParams.set("precipitation_unit", "mm");
+            }
+            window.location.href = url.toString();
+        });
     };
 
-    menu?.addEventListener("click", (e) => {
-        // 2. SOLUCIÓN: Le decimos que el target es un elemento HTML real
-        const target = e.target as HTMLElement;
-        const btn = target.closest("button[data-unit]");
+    // Inicialización inicial
+    initUnits();
 
-        if (!btn) return;
-
-        const unit = btn.getAttribute("data-unit");
-
-        if (unit) {
-            // TypeScript ahora sabe que setUnit recibe strings, así que esto es válido
-            if (unit === "celsius" || unit === "fahrenheit") {
-                setUnit("temperature_unit", unit);
-            } else if (unit === "kmh" || unit === "mph") {
-                setUnit("wind_speed_unit", unit);
-            } else if (unit === "mm" || unit === "inch") {
-                setUnit("precipitation_unit", unit);
-            }
-        }
-    });
-
-    toggleBtn?.addEventListener("click", () => {
-        const url = new URL(window.location.href);
-        const isMetric =
-            url.searchParams.get("temperature_unit") !== "fahrenheit";
-
-        if (isMetric) {
-            url.searchParams.set("temperature_unit", "fahrenheit");
-            url.searchParams.set("wind_speed_unit", "mph");
-            url.searchParams.set("precipitation_unit", "inch");
-        } else {
-            url.searchParams.set("temperature_unit", "celsius");
-            url.searchParams.set("wind_speed_unit", "kmh");
-            url.searchParams.set("precipitation_unit", "mm");
-        }
-        window.location.href = url.toString();
-    });
+    // Reinicializar después de cada navegación con View Transitions
+    document.addEventListener("astro:page-load", initUnits);
 </script>
